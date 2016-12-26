@@ -31,7 +31,7 @@ public class Adder {
 		// Divide in due il dominio da sommare per farlo in parallelo
 		// MAPPER: qui occorrerà trovare l'algoritmo di separazione del dominio
 		AdderTask task1 = new AdderTask(elements.subList(0, elements.size()/2));
-		AdderTask task2 = new AdderTask(elements.subList((elements.size()/2)+1, elements.size()-1));
+		AdderTask task2 = new AdderTask(elements.subList((elements.size()/2), elements.size()));
 		
         /**
          * Queste chiamate sono asincrone
