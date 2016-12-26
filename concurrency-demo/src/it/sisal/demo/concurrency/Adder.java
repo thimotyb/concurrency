@@ -42,8 +42,10 @@ public class Adder {
                  * 
                  * In realtà non serve usare qui uno stream per il parallelismo, perché
                  * già l'esecuzione della call avviene in parallelo tramite 
-                 * l'Executor Service.
+                 * l'Executor Service. Anzi, parallel su EE non viene in realtà
+                 * eseguito in parallelo.
                  * 
+                 * Meglio lavorare direttamente su task Callable,
                  * vedi esempio a call multiple su
                  * https://github.com/thimotyb/java8/blob/master/java8course/src/it/corso/concurrency/Example3.java
                  * 
