@@ -22,44 +22,32 @@ public class Adder {
     private ManagedExecutorService mes;
 	
 	/**
-	 * Il metodo è sincrono ma utilizza un parallel framework
+	 * Il metodo è sincrono ma utilizza un executor framework per il parallelismo
 	 * @param elements
 	 * @return
 	 */
 	public Integer addAll(List<Integer> elements) {
 		
-		Callable theAnswer = new Callable() {
-
-            @Override
-            public Integer call() throws Exception {
-                /**
-                 * Simula una parte di elaborazione.
-                 * Qui il punto sta se sia possibile prima suddividere il dominio
-                 * di calcolo impostando un approccio Map/Reduce o Fork/Join
-                 * 
-                 * Qui la stream è usata per comodità per fare la somma, non per fare
-                 * parallelismo che invece è indotto dal fatto di stare in una Callable
-                 * 
-                 * Le Callable dovranno essere fatte in modo da lavorare su parti
-                 * del dominio da elaborare.
-                 * Vedi esempio a call multiple su
-                 * https://github.com/thimotyb/java8/blob/master/java8course/src/it/corso/concurrency/Example3.java
-                 * 
-                 */
-                Integer mySum = elements.stream().reduce(0,  (a, b) -> a + b);
-                return mySum;
-            }
-        };
+		// Divide in due il dominio da sommare per farlo in parallelo
+		// MAPPER: qui occorrerà trovare l'algoritmo di separazione del dominio
+		AdderTask task1 = new AdderTask(elements.subList(0, elements.size()/2));
+		AdderTask task2 = new AdderTask(elements.subList((elements.size()/2)+1, elements.size()-1));
+		
         /**
-         * Questa chiamata è asincrona
+         * Queste chiamate sono asincrone
          */
-        Future futureResult = mes.submit(theAnswer);
+        Future<Integer> half1 = mes.submit(task1);
+        Future<Integer> half2 = mes.submit(task2);
+        
         try {
         	/**
         	 * Qui si inserisce il punto di attesa che chiude la catena asincrona
-        	 * e sincronizza la riposta
+        	 * e sincronizza la riposta, prendendo i risultato delle due metà
+        	 * 
+        	 * REDUCER: Qui occorrerà trovare il criterio di ricomposizione dei risultati
         	 */
-            return (Integer) futureResult.get();
+            Integer result = half1.get() + half2.get();
+            return result;
         } catch (InterruptedException | ExecutionException ex) {
             throw new IllegalStateException("Cannot get the answer", ex);
         }
