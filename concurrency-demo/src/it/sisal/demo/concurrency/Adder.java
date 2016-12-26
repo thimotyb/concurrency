@@ -39,6 +39,14 @@ public class Adder {
                  * 
                  * Qui uso una lambda di riduzione molto semplice, ma usando
                  * una method reference si possono creare lambda più articolate
+                 * 
+                 * In realtà non serve usare qui uno stream per il parallelismo, perché
+                 * già l'esecuzione della call avviene in parallelo tramite 
+                 * l'Executor Service.
+                 * 
+                 * vedi esempio a call multiple su
+                 * https://github.com/thimotyb/java8/blob/master/java8course/src/it/corso/concurrency/Example3.java
+                 * 
                  */
                 Integer mySum = elements.stream().parallel().reduce(0,  (a, b) -> a + b);
                 return mySum;
